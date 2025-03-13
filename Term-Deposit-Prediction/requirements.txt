@@ -1,6 +1,6 @@
 pandas
 streamlit
 numpy
-optimized_xgboost
+xgboost
 matplotlib
 seaborn

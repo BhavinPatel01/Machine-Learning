@@ -6,7 +6,7 @@ import seaborn as sns
 from sklearn.preprocessing import LabelEncoder
 
 # Load the trained model
-with open("model.pkl", "rb") as f:
+with open("Term-Deposit-Prediction/model.pkl", "rb") as f:
     model = pickle.load(f)
 
 # Define categorical columns and encoders
@@ -43,24 +43,30 @@ def home_page():
     st.write("This project analyzes customer data to predict if they will subscribe to a term deposit. The prediction is made using machine learning techniques, specifically the XGBoost model, which is known for its high efficiency and accuracy in predictive modeling.")
 
 
- # Form Page
+
+# Form Page
 def form_page():
     st.title("Predict Term Deposit Subscription")
     
-    age = st.number_input("Age", min_value=18, max_value=100, value=30)
-    job = st.selectbox("Job", categories["job"])
-    marital = st.selectbox("Marital Status", categories["marital"])
-    education = st.selectbox("Education", categories["education"])
-    balance = st.number_input("Balance", min_value=-10000, max_value=100000, value=1000)
-    contact = st.selectbox("Contact Type", categories["contact"])
-    month = st.selectbox("Last Contact Month", categories["month"])
-    day = st.number_input("Last Contact Day", min_value=1, max_value=31, value=15)
-    duration = st.number_input("Call Duration (seconds)", min_value=0, max_value=5000, value=100)
-    campaign = st.number_input("Campaign Contacts", min_value=1, max_value=50, value=1)
-    previous = st.number_input("Previous Contacts", min_value=0, max_value=50, value=0)
-    poutcome = st.selectbox("Previous Outcome", categories["poutcome"])
-    housing_new = st.selectbox("Has Housing Loan", [0, 1])
-    loan_new = st.selectbox("Has Personal Loan", [0, 1])
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        age = st.number_input("Age", min_value=18, max_value=100, value=30)
+        job = st.selectbox("Job", categories["job"])
+        marital = st.selectbox("Marital Status", categories["marital"])
+        education = st.selectbox("Education", categories["education"])
+        balance = st.number_input("Balance", min_value=-10000, max_value=100000, value=1000)
+        contact = st.selectbox("Contact Type", categories["contact"])
+        month = st.selectbox("Last Contact Month", categories["month"])
+    
+    with col2:
+        day = st.number_input("Last Contact Day", min_value=1, max_value=31, value=15)
+        duration = st.number_input("Call Duration (seconds)", min_value=0, max_value=5000, value=100)
+        campaign = st.number_input("Campaign Contacts", min_value=1, max_value=50, value=1)
+        previous = st.number_input("Previous Contacts", min_value=0, max_value=50, value=0)
+        poutcome = st.selectbox("Previous Outcome", categories["poutcome"])
+        housing_new = st.selectbox("Has Housing Loan", [0, 1])
+        loan_new = st.selectbox("Has Personal Loan", [0, 1])
     
     if st.button("Predict"):
         input_data = pd.DataFrame({
@@ -70,17 +76,13 @@ def form_page():
         })
         
         for col in cat_columns:
-            input_data[col] = categorical_encoders[col].transform(input_data[col]).astype(int)  # Ensure numeric type
-
-
+            input_data[col] = categorical_encoders[col].transform(input_data[col]).astype(int)
         
-        # Ensure column order matches the training data
         input_data = input_data[model.feature_names_in_]
         prediction = model.predict(input_data)[0]
-
         result = "Subscribed" if prediction == 1 else "Not Subscribed"
         st.write(f"### Prediction: {result}")  
-
+        
 # Model Statistics Page
 def model_statistics():
     st.title("Model Statistics")
@@ -89,7 +91,7 @@ def model_statistics():
     st.write("### Model Accuracy: 89%")
 
 
-    df = pd.read_csv("bank.csv")
+    df = pd.read_csv("Term-Deposit-Prediction/bank.csv")
 
     st.write("### Sample Data (20 rows)")
     st.write(df.sample(20))
